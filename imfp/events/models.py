@@ -1,8 +1,7 @@
 
-from django.contrib.auth.models import User
 from django.db import models
 from django_google_maps import fields as map_fields
-from constants import EVENT_TYPES, EVENT_ZONES
+from imfp.events.constants import EVENT_TYPES, EVENT_ZONES
 
 
 class Event(models.Model):
@@ -15,8 +14,3 @@ class Event(models.Model):
     event_type = models.CharField(max_length=32, choices=EVENT_TYPES)
     event_zone = models.CharField(max_length=32, choices=EVENT_ZONES)
     seats = models.IntegerField()
-
-
-class Subscription(models.Model):
-    event = models.ForeignKey(Event)
-    user = models.OneToOneField(User)

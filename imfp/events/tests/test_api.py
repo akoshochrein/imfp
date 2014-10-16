@@ -1,9 +1,9 @@
 import datetime
 from mock import Mock, patch
 from django.test.testcases import TestCase
-from imfp.events.api import create_event
+from imfp.events.api import create_event, subscribe_to_event
 
-__all__ = ['CreateEventTestCase']
+__all__ = ['CreateEventTestCase', 'SubscribeToEventTestCase']
 
 
 class CreateEventTestCase(TestCase):
@@ -12,6 +12,7 @@ class CreateEventTestCase(TestCase):
         self.mock_request = Mock()
         self.mock_request.method = 'POST'
         self.mock_request.POST = {
+            'user_id': 1,
             'name': 'Test Event',
             'description': 'test',
             'seats': 2,
@@ -35,3 +36,38 @@ class CreateEventTestCase(TestCase):
     def test_create_event_called(self):
         response = create_event(self.mock_request)
         self.assertEquals(response.content, '{"success": false, "error": "Invalid form data"}')
+
+
+class SubscribeToEventTestCase(TestCase):
+
+    def setUp(self):
+        self.mock_event = Mock(id=1)
+        self.mock_user = Mock(id=1)
+        self.mock_subscription = Mock(event=self.mock_event, user=self.mock_user)
+
+        self.mock_request = Mock()
+        self.mock_request.method = 'POST'
+        self.mock_request.POST = {'user_id': self.mock_user.id}
+
+    def test_bad_request(self):
+        self.mock_request.method = 'GET'
+        response = subscribe_to_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.status_code, 400)
+
+    def test_invalid_form(self):
+        self.mock_user.id = 'lol'
+        self.mock_request.POST = {'user_id': self.mock_user.id}
+        response = subscribe_to_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.content, '{"success": false, "error": "Invalid form data"}')
+
+    def test_failed_create_subscription(self):
+        with patch('imfp.events.api.Subscription.objects.create_subscription') as mock_create_subscription:
+            mock_create_subscription.return_value = None
+            response = subscribe_to_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.content, '{"success": false, "error": "Subscribing to the event failed."}')
+
+    def test_subscribe_success(self):
+        with patch('imfp.events.api.Subscription.objects.create_subscription') as mock_create_subscription:
+            mock_create_subscription.return_value = self.mock_subscription
+            response = subscribe_to_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.content, '{"success": true}')

@@ -1,7 +1,8 @@
 from django.http.response import HttpResponseBadRequest
-from imfp.core.helpers import HttpJsonResponse
-from imfp.events.forms import CreateEventForm
+from imfp.core.http_helpers import HttpJsonResponse
+from imfp.events.forms import CreateEventForm, SubscribeToEventForm
 from imfp.events.models import Event
+from imfp.subscriptions.models import Subscription
 
 
 def create_event(request):
@@ -23,6 +24,23 @@ def create_event(request):
             )
             event.save()
             return HttpJsonResponse({'success': True})
+        else:
+            return HttpJsonResponse({'success': False, 'error': 'Invalid form data'})
+    else:
+        return HttpResponseBadRequest()
+
+
+def subscribe_to_event(request, event_id):
+    if request.method == 'POST':
+        form = SubscribeToEventForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            user_id = data['user_id']
+            subscription = Subscription.objects.create_subscription(user_id, event_id)
+            if subscription:
+                return HttpJsonResponse({'success': True})
+            else:
+                return HttpJsonResponse({'success': False, 'error': 'Subscribing to the event failed.'})
         else:
             return HttpJsonResponse({'success': False, 'error': 'Invalid form data'})
     else:

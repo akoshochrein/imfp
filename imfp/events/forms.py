@@ -9,3 +9,7 @@ class CreateEventForm(forms.Form):
     time = forms.DateTimeField()
     type = forms.ChoiceField(choices=EVENT_TYPES)
     zone = forms.ChoiceField(choices=EVENT_ZONES)
+
+
+class SubscribeToEventForm(forms.Form):
+    user_id = forms.IntegerField()

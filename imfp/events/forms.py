@@ -11,5 +11,13 @@ class CreateEventForm(forms.Form):
     zone = forms.ChoiceField(choices=EVENT_ZONES)
 
 
-class SubscribeToEventForm(forms.Form):
+class EventActionsFormBase(forms.Form):
     user_id = forms.IntegerField()
+
+
+class SubscribeToEventForm(EventActionsFormBase):
+    pass
+
+
+class UnsubscribeFromEventForm(EventActionsFormBase):
+    pass

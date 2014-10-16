@@ -1,7 +1,7 @@
 import datetime
 from mock import Mock, patch
 from django.test.testcases import TestCase
-from imfp.events.api import create_event, subscribe_to_event, unsubscribe_from_event
+from imfp.events.api import create_event, subscribe_to_event, unsubscribe_from_event, delete_event
 
 __all__ = ['CreateEventTestCase', 'SubscribeToEventTestCase']
 
@@ -52,9 +52,6 @@ class EventActionTestBase(TestCase):
 
 class SubscribeToEventTestCase(EventActionTestBase):
 
-    def setUp(self):
-        super(SubscribeToEventTestCase, self).setUp()
-
     def test_bad_request(self):
         self.mock_request.method = 'GET'
         response = subscribe_to_event(self.mock_request, self.mock_event.id)
@@ -81,9 +78,6 @@ class SubscribeToEventTestCase(EventActionTestBase):
 
 class UnsubscribeFromEventTestCase(EventActionTestBase):
 
-    def setUp(self):
-        super(UnsubscribeFromEventTestCase, self).setUp()
-
     def test_bad_request(self):
         self.mock_request.method = 'GET'
         response = unsubscribe_from_event(self.mock_request, self.mock_event.id)
@@ -105,4 +99,30 @@ class UnsubscribeFromEventTestCase(EventActionTestBase):
         with patch('imfp.events.api.Subscription.objects.remove_subscription') as mock_remove_subscription:
             mock_remove_subscription.return_value = True
             response = unsubscribe_from_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.content, '{"success": true}')
+
+
+class DeleteEventTestCase(EventActionTestBase):
+
+    def test_bad_request(self):
+        self.mock_request.method = 'GET'
+        response = delete_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.status_code, 400)
+
+    def test_invalid_form(self):
+        self.mock_user.id = 'lol'
+        self.mock_request.POST = {'user_id': self.mock_user.id}
+        response = delete_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.content, '{"success": false, "error": "Invalid form data"}')
+
+    def test_failed_delete(self):
+        with patch('imfp.events.api.Event.objects.delete_event') as mock_delete_event:
+            mock_delete_event.return_value = False
+            response = delete_event(self.mock_request, self.mock_event.id)
+        self.assertEquals(response.content, '{"success": false, "error": "Deleting event failed. You are most likely not the owner. Nice try, though."}')
+
+    def test_successful_delete(self):
+        with patch('imfp.events.api.Event.objects.delete_event') as mock_delete_event:
+            mock_delete_event.return_value = True
+            response = delete_event(self.mock_request, self.mock_event.id)
         self.assertEquals(response.content, '{"success": true}')

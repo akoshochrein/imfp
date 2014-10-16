@@ -20,6 +20,16 @@ class EventManager(models.Manager):
         )
         return event
 
+    def delete_event(self, requester_id, event_id):
+        event = Event.objects.get(event_id)
+        requester = User.objects.get(requester_id)
+
+        if event.creator == requester:
+            event.delete()
+            return True
+        else:
+            return False
+
 
 class Event(models.Model):
     creator = models.ForeignKey('User')

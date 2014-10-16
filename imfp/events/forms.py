@@ -21,3 +21,7 @@ class SubscribeToEventForm(EventActionsFormBase):
 
 class UnsubscribeFromEventForm(EventActionsFormBase):
     pass
+
+
+class DeleteEventForm(EventActionsFormBase):
+    pass

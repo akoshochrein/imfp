@@ -1,4 +1,6 @@
 
+TEMPLATE_LIST = 'list.html'
+
 EVENT_TYPES = (
     (0, 'Party'),
     (1, 'Hiking'),

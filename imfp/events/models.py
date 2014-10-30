@@ -28,6 +28,9 @@ class EventManager(models.Manager):
         else:
             return False
 
+    def get_events_by_user(self, user):
+        return Event.objects.filter(creator=user)
+
 
 class Event(models.Model):
     creator = models.ForeignKey('User')

@@ -1,4 +1,8 @@
 <div clas="m-subscription-options">
-    <div class="m-button-subscribe"></div>
-    <div class="m-button-unsubscribe"></div>
+    {% if event.user_is_going %}
+        <div class="m-button-unsubscribe"></div>
+    {% else %}
+        <div class="m-button-subscribe"></div>
+    {% endif %}
+    <div class="m-button-remove"></div>
 </div>

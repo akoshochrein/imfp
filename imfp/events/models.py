@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from imfp.events.constants import EVENT_TYPES, EVENT_ZONES
+from constants import EVENT_TYPES, EVENT_ZONES
 
 
 class EventManager(models.Manager):
@@ -33,7 +33,8 @@ class EventManager(models.Manager):
 
 
 class Event(models.Model):
-    creator = models.ForeignKey('User')
+    # apparently 'auth.User' is good as well, but I don't care about circular dependencies
+    creator = models.ForeignKey(User)
     description = models.CharField(max_length=255)
     creation_time = models.DateTimeField()
     time = models.DateTimeField()

@@ -3,3 +3,5 @@ virtualenv
 staticfiles
 
 *.iml
+
+imfp_db

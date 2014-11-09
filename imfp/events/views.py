@@ -2,7 +2,7 @@ from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render
 from imfp.events.constants import TEMPLATE_LIST
 from imfp.events.models import Event
-from imfp.subscriptions.herlpers import user_is_subbed_to_event
+from imfp.subscriptions.helpers import user_is_subbed_to_event
 
 
 def list_events(request):
@@ -30,7 +30,8 @@ def create_return_dict(user, events):
             'description': event.description,
             'time': event.time,
             'address': event.address,
-            'user_is_going': user_is_subbed_to_event(user, event)
+            'user_is_going': user_is_subbed_to_event(user, event),
+            'remaining_places': event.max_seats - event.current_seats
         }
         events_dictified.append(event_dictified)
 

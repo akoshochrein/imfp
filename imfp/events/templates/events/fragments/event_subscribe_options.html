@@ -2,7 +2,7 @@
     {% if event.user_is_going %}
         <div class="m-button-unsubscribe"></div>
     {% else %}
-        <div class="m-button-subscribe"></div>
+        <div class="m-button-subscribe {% if event.remaining_places == 0 %}disabled{% endif %}"></div>
     {% endif %}
     <div class="m-button-remove"></div>
 </div>

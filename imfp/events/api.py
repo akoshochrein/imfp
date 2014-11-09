@@ -34,6 +34,7 @@ def subscribe_to_event(request, event_id):
     if request.method == 'POST':
         form = SubscribeToEventForm(request.POST)
         if form.is_valid():
+            # TODO need to check if the event is full
             data = form.cleaned_data
             user_id = data['user_id']
             subscription = Subscription.objects.create_subscription(user_id, event_id)

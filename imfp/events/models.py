@@ -14,7 +14,8 @@ class EventManager(models.Manager):
             location=location,
             zone=zone,
             type=type,
-            seats=seats
+            max_seats=seats,
+            current_seats=seats
         )
         return event
 
@@ -34,6 +35,7 @@ class EventManager(models.Manager):
 
 class Event(models.Model):
     # apparently 'auth.User' is good as well, but I don't care about circular dependencies
+    title = models.CharField(max_length=32)
     creator = models.ForeignKey(User)
     description = models.CharField(max_length=255)
     creation_time = models.DateTimeField()
@@ -42,6 +44,7 @@ class Event(models.Model):
     address = models.TextField(max_length=200)
     type = models.CharField(max_length=32, choices=EVENT_TYPES)
     zone = models.CharField(max_length=32, choices=EVENT_ZONES)
-    seats = models.IntegerField()
+    max_seats = models.IntegerField()
+    current_seats = models.IntegerField()
 
     objects = EventManager()

@@ -1,0 +1,13 @@
+
+{% block content %}
+
+    <div id="event-card-container" class="l-event-card-container">
+    {% for event in events %}
+        <div class="m-event-card">
+            {% include 'events/fragments/event_info.html' %}
+            {% include 'events/fragments/event_subsctibe_options' %}
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}

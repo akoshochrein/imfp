@@ -13,9 +13,16 @@ class SubscriptionManager(models.Manager):
         user = get_or_none(User, user_id)
 
         if event and user:
-            subscription = self.create(event=event, user=user)
-            subscription.save()
-            return subscription
+            if event.current_seats == 0:
+                # TODO this Nonesense has to be fixed
+                return None
+            else:
+                subscription = self.create(event=event, user=user)
+                event.current_seats -= 1
+
+                event.save()
+                subscription.save()
+                return subscription
         else:
             # TODO log
             pass
@@ -30,6 +37,11 @@ class SubscriptionManager(models.Manager):
         if event and user:
             try:
                 subscription = self.filter(user=user, event=event)[0]
+
+                # no tricks in my neighborhood
+                event.current_seats = max(event.current_seats + 1, event.max_seats)
+                event.save()
+
                 subscription.delete()
                 return True
             except IndexError:

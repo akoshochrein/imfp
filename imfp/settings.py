@@ -117,7 +117,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'imfp',
-    'events'
+    'events',
+    'auth'
 )
 
 # A sample logging configuration. The only tangible logging
